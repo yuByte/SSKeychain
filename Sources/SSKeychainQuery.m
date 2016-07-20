@@ -250,10 +250,15 @@
 + (NSError *)errorWithCode:(OSStatus) code {
 	static dispatch_once_t onceToken;
 	static NSBundle *resourcesBundle = nil;
-	dispatch_once(&onceToken, ^{
+	if (resourcesBundle == nil) {
 		NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"SSKeychain" withExtension:@"bundle"];
-		resourcesBundle = [NSBundle bundleWithURL:url];
-	});
+		if (url) {
+			dispatch_once(&onceToken, ^{
+				NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"SSKeychain" withExtension:@"bundle"];
+				resourcesBundle = [NSBundle bundleWithURL:url];
+			});
+		}
+	}
 	
 	NSString *message = nil;
 	switch (code) {
